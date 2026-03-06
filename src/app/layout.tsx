@@ -8,9 +8,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Shinkomonji E-Learning",
+  title: "新小文字病院 E-Learning",
   description: "新入職員向け動画研修プラットフォーム",
   manifest: "/manifest.json",
+  icons: {
+    apple: '/icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
