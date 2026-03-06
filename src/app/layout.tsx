@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "新入職員向け動画研修プラットフォーム",
   manifest: "/manifest.json",
   icons: {
-    apple: '/icon.png',
+    apple: '/icon.jpg',
   },
   appleWebApp: {
     capable: true,
