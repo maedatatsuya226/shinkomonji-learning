@@ -119,6 +119,20 @@ export default function LibraryPage() {
         });
     }, [lessons, searchQuery, tagFilter]);
 
+    const heroLesson = useMemo(() => {
+        if (!filteredLessons || filteredLessons.length === 0) return null;
+
+        // 1. 未視聴の「必須」動画を探す
+        const unwatchedRequired = filteredLessons.filter(l => l.required && !l.hasViewed);
+        if (unwatchedRequired.length > 0) {
+            return unwatchedRequired[0];
+        }
+
+        // 2. 全部視聴済み（または必須がない）場合は、ランダムにピックアップ！
+        const randomIndex = Math.floor(Math.random() * filteredLessons.length);
+        return filteredLessons[randomIndex];
+    }, [filteredLessons]);
+
     const showDashboard = isTarget || userRole === "admin";
 
     const renderDashboard = () => {
@@ -226,38 +240,39 @@ export default function LibraryPage() {
             {/* Netflix-style Hero Section */}
             <div className="relative w-full h-[50vh] min-h-[400px] mb-8 lg:mb-12 flex items-end rounded-xl overflow-hidden shadow-2xl border border-zinc-800/50">
                 <div className="absolute inset-0 z-0 bg-zinc-900">
-                    {filteredLessons[0]?.thumbnail && (
-                        <img src={filteredLessons[0].thumbnail} className="w-full h-full object-cover opacity-40 mix-blend-luminosity" alt="Featured" />
+                    {heroLesson?.thumbnail && (
+                        <img src={heroLesson.thumbnail} className="w-full h-full object-cover opacity-40 mix-blend-luminosity" alt="Featured" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
                     <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/60 to-transparent"></div>
                 </div>
 
                 <div className="relative z-10 w-full px-6 md:px-12 pb-10">
-                    {filteredLessons[0] ? (
+                    {heroLesson ? (
                         <div className="max-w-3xl space-y-4">
                             <span className="text-[10px] font-black tracking-widest text-orange-500 uppercase flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span> N E W
+                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                {!heroLesson.hasViewed && heroLesson.required ? "RECOMMENDED FOR YOU" : "PICK UP"}
                             </span>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight drop-shadow-2xl">
-                                {filteredLessons[0].title}
+                                {heroLesson.title}
                             </h1>
                             <div className="flex items-center gap-3 text-sm font-semibold text-zinc-300 drop-shadow-md">
-                                {filteredLessons[0].tags?.[0] && (
-                                    <span className="text-white">{filteredLessons[0].tags[0]}</span>
+                                {heroLesson.tags?.[0] && (
+                                    <span className="text-white">{heroLesson.tags[0]}</span>
                                 )}
                                 <span>•</span>
-                                <span className={filteredLessons[0].required ? "text-orange-400" : "text-zinc-400"}>
-                                    {filteredLessons[0].required ? "必須コンテンツ" : "任意コンテンツ"}
+                                <span className={heroLesson.required ? "text-orange-400" : "text-zinc-400"}>
+                                    {heroLesson.required ? "必須コンテンツ" : "任意コンテンツ"}
                                 </span>
                             </div>
                             <div className="pt-4 flex items-center gap-3">
-                                <button onClick={() => router.push(`/lesson/${filteredLessons[0].lesson_id}`)} className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-bold hover:bg-white/80 transition-colors shadow-lg active:scale-95">
+                                <button onClick={() => router.push(`/lesson/${heroLesson.lesson_id}`)} className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-bold hover:bg-white/80 transition-colors shadow-lg active:scale-95">
                                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                                    再生
+                                    {heroLesson.hasViewed ? "もう一度見る" : "再生"}
                                 </button>
                                 {userRole === "admin" && (
-                                    <button onClick={() => router.push(`/admin/lesson/${filteredLessons[0].lesson_id}`)} className="flex items-center gap-2 bg-zinc-600/70 text-white px-6 py-3 rounded font-bold hover:bg-zinc-600 transition-colors backdrop-blur-md shadow-lg active:scale-95">
+                                    <button onClick={() => router.push(`/admin/lesson/${heroLesson.lesson_id}`)} className="flex items-center gap-2 bg-zinc-600/70 text-white px-6 py-3 rounded font-bold hover:bg-zinc-600 transition-colors backdrop-blur-md shadow-lg active:scale-95">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                         詳細情報
                                     </button>

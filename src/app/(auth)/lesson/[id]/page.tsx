@@ -4,6 +4,7 @@ export const runtime = 'edge';
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fetchGasApi, getSessionToken } from "@/lib/api";
+import YouTube from "react-youtube";
 
 type LessonData = {
     lesson_id: string;
@@ -25,6 +26,70 @@ export default function LessonPage() {
     const [submitting, setSubmitting] = useState(false);
     const [submitMsg, setSubmitMsg] = useState("");
 
+    // --- 視聴判定ロジック用 ---
+    const [isPlaying, setIsPlaying] = useState(false);
+    const accumulatedTimeRef = useRef(0);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const durationRef = useRef(0);
+    const [watchWarning, setWatchWarning] = useState("");
+    const [isWatched, setIsWatched] = useState(false);
+
+    const getYouTubeId = (url: string) => {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    };
+
+    useEffect(() => {
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, []);
+
+    const onReady = (event: any) => {
+        durationRef.current = event.target.getDuration();
+    };
+
+    const onStateChange = (event: any) => {
+        if (event.data === 1) { // PLAYING
+            setIsPlaying(true);
+            if (!intervalRef.current) {
+                intervalRef.current = setInterval(() => {
+                    accumulatedTimeRef.current += 1;
+                }, 1000);
+            }
+        } else {
+            setIsPlaying(false);
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+        }
+
+        if (event.data === 0) { // ENDED
+            checkCompletion();
+        }
+    };
+
+    const checkCompletion = () => {
+        if (durationRef.current > 0 && !isWatched) {
+            const requiredTime = durationRef.current * 0.9;
+            if (accumulatedTimeRef.current >= requiredTime) {
+                setIsWatched(true);
+                const token = getSessionToken();
+                if (token) {
+                    fetchGasApi("recordView", { token, lessonId }).catch(e => console.error(e));
+                }
+            } else {
+                setWatchWarning("スキップせずに最後までご視聴ください");
+                setTimeout(() => setWatchWarning(""), 5000);
+            }
+        }
+    };
+    // ----------------------
+
     useEffect(() => {
         const fetchData = async () => {
             const token = getSessionToken();
@@ -33,9 +98,6 @@ export default function LessonPage() {
                 return;
             }
             try {
-                // 並行して視聴ログと動画取得を行う
-                fetchGasApi("recordView", { token, lessonId }).catch(e => console.error(e));
-
                 const res = await fetchGasApi("getLesson", { token, lessonId });
                 if (res.ok) {
                     setLesson(res.lesson);
@@ -115,17 +177,34 @@ export default function LessonPage() {
             <div className="flex flex-col xl:flex-row gap-8 lg:gap-12">
                 {/* Main Video Area */}
                 <div className="flex-1 flex flex-col gap-6">
-                    <div className="bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800/50 relative w-full aspect-video ring-1 ring-white/10">
+                    <div className="bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800/50 relative w-full aspect-video ring-1 ring-white/10 group">
                         {lesson.video_url ? (
-                            <iframe
-                                src={lesson.video_url}
-                                title={lesson.title}
+                            <YouTube
+                                videoId={getYouTubeId(lesson.video_url) || ""}
+                                opts={{
+                                    width: "100%",
+                                    height: "100%",
+                                    playerVars: {
+                                        autoplay: 0,
+                                        rel: 0,
+                                        modestbranding: 1,
+                                    },
+                                }}
                                 className="absolute inset-0 w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
+                                iframeClassName="w-full h-full"
+                                onReady={onReady}
+                                onStateChange={onStateChange}
                             />
                         ) : (
                             <div className="flex items-center justify-center h-full text-zinc-500 font-semibold">動画URLが未設定です</div>
+                        )}
+
+                        {/* 警告メッセージ (Toast) */}
+                        {watchWarning && (
+                            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/90 text-red-500 px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(220,38,38,0.5)] border border-red-900 animate-in slide-in-from-top-4 fade-in duration-300 z-50 flex items-center gap-2 text-sm backdrop-blur-md">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                {watchWarning}
+                            </div>
                         )}
                     </div>
 

@@ -70,7 +70,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 transition-all">
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
-                        <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/library')}>
+                        <div className="flex-shrink-0 flex items-center gap-3 cursor-pointer group" onClick={() => router.push('/library')}>
+                            <img src="/icon.jpg?v=3" alt="Logo" className="w-8 h-8 rounded-sm object-cover transition-transform duration-300 group-hover:scale-105 shadow-[0_0_10px_rgba(234,88,12,0.2)]" />
                             <span className="font-black text-2xl text-orange-600 tracking-tighter transition-transform duration-300 group-hover:drop-shadow-[0_0_10px_rgba(234,88,12,0.8)]">E-LEARNING</span>
                         </div>
                         <div className="flex items-center gap-4">
