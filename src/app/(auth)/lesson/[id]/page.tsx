@@ -79,46 +79,43 @@ export default function LessonPage() {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500 mb-4"></div>
-                <p className="text-slate-500 font-medium">読み込み中...</p>
+            <div className="flex flex-col items-center justify-center min-h-[50vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mb-4 shadow-[0_0_15px_rgba(234,88,12,0.5)]"></div>
             </div>
         );
     }
 
     if (error || !lesson) {
         return (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-center font-medium border border-red-100">
+            <div className="bg-red-950/50 text-red-500 p-8 rounded-lg text-center font-medium border border-red-900/50 max-w-xl mx-auto mt-20">
                 {error || "データが見つかりません"}
-                <div className="mt-4">
-                    <button onClick={() => router.push("/library")} className="underline hover:text-red-800">ライブラリに戻る</button>
+                <div className="mt-6">
+                    <button onClick={() => router.push("/library")} className="bg-white text-black px-6 py-2 rounded font-bold hover:bg-white/80 transition-colors">
+                        ライブラリに戻る
+                    </button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="animate-in fade-in zoom-in-95 duration-700 pb-20 max-w-[1600px] mx-auto">
 
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">{lesson.title}</h1>
-                    <p className="text-slate-500 text-sm mt-1 font-mono text-xs">ID: {lesson.lesson_id}</p>
-                </div>
+            {/* Nav area */}
+            <div className="flex items-center justify-between mb-8 px-2">
                 <button
                     onClick={() => router.push("/library")}
-                    className="bg-white border border-slate-200 text-slate-600 px-4 py-2 font-medium rounded-xl hover:bg-slate-50 transition-colors shadow-sm text-sm whitespace-nowrap"
+                    className="group flex items-center gap-2 text-zinc-400 hover:text-white transition-colors font-semibold"
                 >
-                    ← 一覧に戻る
+                    <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    一覧に戻る
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                {/* Video Player */}
-                <div className="lg:col-span-2 space-y-4">
-                    <div className="bg-black rounded-2xl overflow-hidden shadow-lg border border-slate-800 relative w-full aspect-video">
+            <div className="flex flex-col xl:flex-row gap-8 lg:gap-12">
+                {/* Main Video Area */}
+                <div className="flex-1 flex flex-col gap-6">
+                    <div className="bg-black rounded-xl overflow-hidden shadow-2xl border border-zinc-800/50 relative w-full aspect-video ring-1 ring-white/10">
                         {lesson.video_url ? (
                             <iframe
                                 src={lesson.video_url}
@@ -128,63 +125,72 @@ export default function LessonPage() {
                                 allowFullScreen
                             />
                         ) : (
-                            <div className="flex items-center justify-center h-full text-white">動画URLが未設定です</div>
+                            <div className="flex items-center justify-center h-full text-zinc-500 font-semibold">動画URLが未設定です</div>
                         )}
                     </div>
-                    <div className="text-sm text-slate-500 pl-2">
-                        埋め込みで再生できない場合：
-                        <a href={lesson.video_url} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 underline font-medium ml-1">
-                            別タブで開く
-                        </a>
+
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-2 drop-shadow-lg">{lesson.title}</h1>
+                        <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">ID: {lesson.lesson_id} •
+                            <a href={lesson.video_url} target="_blank" rel="noopener noreferrer" className="ml-2 bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded hover:bg-zinc-700 transition-colors">別タブで開く</a>
+                        </p>
                     </div>
                 </div>
 
-                {/* Feedback Form */}
-                <div className="lg:col-span-1">
-                    <div className="bg-surface rounded-2xl shadow-sm border border-slate-200 h-full flex flex-col overflow-hidden">
-                        <div className="bg-slate-50 border-b border-slate-200 px-6 py-4">
-                            <h2 className="font-bold text-slate-800 flex items-center gap-2">
-                                📝 課題・感想
+                {/* Feedback Panel */}
+                <div className="xl:w-[450px] flex-shrink-0">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl h-full flex flex-col overflow-hidden shadow-2xl relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="p-6 border-b border-zinc-800/50">
+                            <h2 className="font-black text-xl text-white tracking-tight flex items-center gap-2">
+                                <span className="w-1.5 h-6 bg-orange-600 rounded-full"></span>
+                                課題・感想
                             </h2>
                         </div>
 
-                        <div className="p-6 flex-1 flex flex-col">
-                            <div className="mb-6">
-                                <label className="block text-xs font-semibold text-primary-600 uppercase tracking-wider mb-2">
-                                    質問内容
-                                </label>
-                                <div className="bg-primary-50 rounded-xl p-4 text-sm font-medium text-primary-900 border border-primary-100">
-                                    {lesson.question || "この動画を見て学んだことや、感想を入力してください。"}
+                        <div className="p-6 flex-1 flex flex-col gap-6 relative z-10">
+                            <div>
+                                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">質問内容</label>
+                                <div className="bg-zinc-950/50 rounded-lg p-5 text-sm leading-relaxed font-medium text-zinc-300 border border-zinc-800/50 shadow-inner">
+                                    {lesson.question || "この動画を見て学んだことや、抱いた感想を入力してください。"}
                                 </div>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-                                <div className="flex-1 min-h-[150px] mb-6">
-                                    <label htmlFor="answer" className="block text-sm font-semibold text-slate-700 mb-2">
+                            <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-4">
+                                <div className="flex-1 min-h-[200px] flex flex-col">
+                                    <label htmlFor="answer" className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">
                                         あなたの回答
                                     </label>
                                     <textarea
                                         id="answer"
                                         required
-                                        rows={6}
                                         value={answer}
                                         onChange={(e) => setAnswer(e.target.value)}
-                                        className="w-full h-full p-4 rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors resize-none"
-                                        placeholder="ここに入力してください..."
+                                        className="w-full flex-1 p-5 rounded-lg border border-zinc-700 bg-zinc-800/80 text-white placeholder-zinc-500 focus:bg-zinc-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors resize-none shadow-inner"
+                                        placeholder="回答を入力..."
                                     />
                                 </div>
 
-                                <div className="mt-auto">
+                                <div className="pt-2">
                                     <button
                                         type="submit"
                                         disabled={submitting || !answer.trim()}
-                                        className="w-full py-3.5 px-4 bg-primary-500 text-white font-bold rounded-xl shadow-sm hover:bg-primary-600 hover:shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full py-4 px-6 bg-orange-600 text-white font-bold rounded-lg shadow-lg hover:bg-orange-500 hover:shadow-orange-600/20 hover:-translate-y-0.5 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex justify-center items-center gap-2"
                                     >
-                                        {submitting ? "送信中..." : "送信する"}
+                                        {submitting ? (
+                                            <>
+                                                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>送信中...</span>
+                                            </>
+                                        ) : "回答を送信"}
                                     </button>
 
                                     {submitMsg && (
-                                        <div className="mt-4 text-center font-bold text-emerald-600 text-sm animate-in zoom-in-95">
+                                        <div className="mt-4 p-3 bg-emerald-950/50 border border-emerald-900/50 rounded text-center font-bold text-emerald-500 text-sm animate-in fade-in">
                                             {submitMsg}
                                         </div>
                                     )}

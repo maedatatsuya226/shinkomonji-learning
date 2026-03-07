@@ -60,34 +60,29 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }
 
     return (
-        <div className="min-h-screen bg-[#fffdfa] relative selection:bg-orange-200 selection:text-orange-900">
-            {/* 共通の装飾的背景（固定） */}
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute top-[-10%] right-[-5%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-b from-orange-100/80 to-transparent blur-3xl opacity-80"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full bg-gradient-to-tr from-amber-50 to-transparent blur-3xl opacity-80"></div>
-                <div className="absolute top-[30%] left-[20%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-tr from-rose-50/50 to-transparent blur-3xl opacity-60"></div>
-                <div className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-gradient-to-tl from-cyan-50/40 to-transparent blur-3xl opacity-50"></div>
+        <div className="min-h-screen bg-zinc-950 text-white relative selection:bg-orange-500 selection:text-white">
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-zinc-950">
+                <div className="absolute top-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900/20 via-zinc-950 to-black"></div>
+                <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-orange-600/5 blur-[120px] opacity-70"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-zinc-800/20 blur-[100px] opacity-30"></div>
             </div>
 
-            <nav className="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-white/80 shadow-sm transition-all">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 transition-all">
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
                         <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer group" onClick={() => router.push('/library')}>
-                            <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-orange-500/20 transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3">
-                                E
-                            </div>
-                            <span className="font-extrabold text-xl text-slate-800 tracking-tight transition-colors duration-300 group-hover:text-orange-600">E-Learning</span>
+                            <span className="font-black text-2xl text-orange-600 tracking-tighter transition-transform duration-300 group-hover:drop-shadow-[0_0_10px_rgba(234,88,12,0.8)]">E-LEARNING</span>
                         </div>
                         <div className="flex items-center gap-4">
-                            <div className="hidden sm:flex items-center text-sm bg-slate-100/50 px-3 py-1.5 rounded-full border border-slate-200/50">
-                                <span className="font-medium text-slate-700">{user?.name}</span>
-                                <span className={`ml-2 px-2.5 py-0.5 rounded-full text-xs font-bold leading-none ${user?.role === 'admin' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200/80 text-slate-600'}`}>
-                                    {user?.role === 'admin' ? '管理者' : 'スタッフ'}
+                            <div className="hidden sm:flex items-center text-sm px-3 py-1.5 rounded border border-zinc-800 bg-zinc-900/50">
+                                <span className="font-semibold text-zinc-300">{user?.name}</span>
+                                <span className={`ml-3 px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase ${user?.role === 'admin' ? 'bg-red-900/40 text-red-500 border border-red-900/50' : 'bg-zinc-800 text-zinc-400'}`}>
+                                    {user?.role === 'admin' ? 'Admin' : 'Staff'}
                                 </span>
                             </div>
                             <button
                                 onClick={handleLogout}
-                                className="text-sm font-bold text-slate-500 hover:text-orange-600 transition-colors px-3 py-2 rounded-xl hover:bg-orange-50"
+                                className="text-sm font-bold text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded hover:bg-zinc-900"
                             >
                                 ログアウト
                             </button>
@@ -96,7 +91,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500 relative z-10 w-full">
+            <main className="max-w-[1600px] mx-auto py-8 animate-in fade-in duration-700 relative z-10 w-full">
                 {children}
             </main>
         </div>
