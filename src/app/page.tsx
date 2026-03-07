@@ -38,7 +38,7 @@ export default function LoginPage() {
         setShowIntro(true); // イントロアニメーション開始
         setTimeout(() => {
           router.push("/library");
-        }, 2600); // 2.6秒後に画面遷移
+        }, 3600); // 3.6秒後に画面遷移
       } else {
         setError(res.message || "ログインに失敗しました");
         setLoading(false);
@@ -54,17 +54,35 @@ export default function LoginPage() {
       <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden">
         <style>{`
           @keyframes netflixPop {
-            0% { transform: scale(0.5); opacity: 0; }
-            15% { transform: scale(1); opacity: 1; filter: blur(0px); }
-            70% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
-            100% { transform: scale(4); opacity: 0; filter: blur(10px); }
+            0% { transform: scale(0.6); opacity: 0; filter: brightness(0); }
+            10% { transform: scale(1); opacity: 1; filter: brightness(1.2) drop-shadow(0 0 20px rgba(220,38,38,0.5)); }
+            75% { transform: scale(1.05); opacity: 1; filter: brightness(1) drop-shadow(0 0 40px rgba(220,38,38,0.8)); }
+            100% { transform: scale(25); opacity: 0; filter: blur(6px); }
           }
-          .netflix-animate {
-            animation: netflixPop 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          @keyframes textFade {
+            0% { opacity: 0; transform: translateY(15px) scale(0.95); }
+            15% { opacity: 0; transform: translateY(15px) scale(0.95); }
+            25% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+            80% { opacity: 1; transform: translateY(0) scale(1.02); filter: blur(0px); }
+            95% { opacity: 0; transform: translateY(-5px) scale(1.05); filter: blur(4px); }
+            100% { opacity: 0; }
+          }
+          .n-logo-animate {
+            animation: netflixPop 3.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+          .text-logo-animate {
+            animation: textFade 3.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
         `}</style>
-        <div className="netflix-animate text-orange-600 font-black text-6xl sm:text-7xl md:text-8xl tracking-tighter drop-shadow-[0_0_40px_rgba(234,88,12,0.8)]">
-          E-LEARNING
+        <div className="flex flex-col items-center justify-center gap-6">
+          <div className="n-logo-animate w-32 h-32 md:w-48 md:h-48 flex items-center justify-center z-20 relative">
+            <img src="/k-logo.png" alt="K Logo" className="w-full h-full object-contain" />
+          </div>
+          <div className="text-logo-animate flex items-center justify-center z-10 absolute bottom-[25%]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-orange-600 tracking-tighter drop-shadow-[0_0_20px_rgba(234,88,12,0.8)]">
+              E-LEARNING
+            </h1>
+          </div>
         </div>
       </div>
     );
